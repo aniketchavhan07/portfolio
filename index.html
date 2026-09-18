@@ -41,11 +41,11 @@
             }
           },
           animation: {
-            'float': 'float 5s ease-in-out infinite',
-            'float-delayed': 'floatDelayed 6s ease-in-out 1.5s infinite',
-            'float-slow': 'floatSlow 7s ease-in-out 2.5s infinite',
-            'pulse-glow': 'pulseGlow 6s ease-in-out infinite',
-            'marquee': 'marquee 22s linear infinite',
+            'float': 'float 8.5s ease-in-out infinite',
+            'float-delayed': 'floatDelayed 10s ease-in-out 2s infinite',
+            'float-slow': 'floatSlow 12s ease-in-out 3.5s infinite',
+            'pulse-glow': 'pulseGlow 9s ease-in-out infinite',
+            'marquee': 'marquee 38s linear infinite',
           },
           keyframes: {
             float: {
@@ -131,7 +131,7 @@
     .tilt-card {
       transform-style: preserve-3d;
       perspective: 1000px;
-      transition: transform 0.18s ease-out, border-color 0.25s ease, box-shadow 0.25s ease;
+      transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.35s ease, box-shadow 0.35s ease;
       position: relative;
     }
     .tilt-card .card-sheen {
@@ -140,7 +140,7 @@
       border-radius: inherit;
       background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.12), transparent 60%);
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.5s ease;
       pointer-events: none !important;
       z-index: 25;
     }
@@ -213,9 +213,80 @@
     .modal-box {
       transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease-out;
     }
+
+    /* Futuristic Circular Cyber Preloader */
+    #preloader {
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.85s ease, transform 0.85s ease;
+    }
+    #preloader.loaded {
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(1.04);
+      pointer-events: none;
+    }
+    @keyframes spinClockwise {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes spinCounter {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
+    }
+    .spin-ring-outer {
+      animation: spinClockwise 5.5s linear infinite;
+    }
+    .spin-ring-inner {
+      animation: spinCounter 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
   </style>
 </head>
-<body class="relative antialiased cyber-grid">
+<body class="relative antialiased cyber-grid" style="overflow: hidden;">
+
+  <!-- Futuristic Glowing Circular Preloader Screen -->
+  <div id="preloader" class="fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-[#06060a]">
+    <div class="relative w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center">
+      
+      <!-- Ambient Purple & Cyan Glow Behind Circles -->
+      <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-600/30 to-cyan-500/30 blur-2xl animate-pulse"></div>
+
+      <!-- Outer Dual-Tone Glowing SVG Circle -->
+      <svg class="absolute inset-0 w-full h-full spin-ring-outer" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="2.5" />
+        <circle cx="50" cy="50" r="45" fill="none" stroke="url(#preloader-grad)" stroke-width="3" stroke-linecap="round" stroke-dasharray="85 220" />
+        <defs>
+          <linearGradient id="preloader-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#a855f7" />
+            <stop offset="50%" stop-color="#818cf8" />
+            <stop offset="100%" stop-color="#06b6d4" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <!-- Inner Counter-Rotating Dashed Circle -->
+      <svg class="absolute inset-2 w-[calc(100%-16px)] h-[calc(100%-16px)] spin-ring-inner" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="18 35" opacity="0.8" />
+      </svg>
+
+      <!-- Center Futuristic Monogram Core -->
+      <div class="relative z-10 flex flex-col items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#0b0b14] border border-white/10 shadow-2xl">
+        <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 absolute top-3 animate-ping opacity-60"></div>
+        <span class="font-syne font-black text-xl sm:text-2xl text-white tracking-widest text-gradient mt-1">AC</span>
+        <span class="text-[8px] font-mono text-purple-400 tracking-widest font-bold -mt-0.5">DEV</span>
+      </div>
+    </div>
+
+    <!-- Live Percentage Counter & Status -->
+    <div class="mt-7 flex flex-col items-center gap-1.5 font-mono">
+      <div class="flex items-baseline gap-1">
+        <span id="loader-percent" class="font-syne font-black text-2xl sm:text-3xl text-white tracking-tight">0</span>
+        <span class="text-xs text-cyan-400 font-bold">%</span>
+      </div>
+      <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mt-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-[10px] tracking-widest text-slate-300 uppercase">INITIALIZING SYSTEM</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Ambient Glow Backgrounds -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
@@ -1197,13 +1268,49 @@
   <!-- JavaScript Modules & Controllers -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
+      initPreloader();
       initThreeHeroScene();
       initGSAPAnimations();
       initCardTiltSheen();
       initKeyboardEscapeHandler();
     });
 
-    /* 1. Mobile-Optimized Three.js WebGL Scene (Dual Wireframe Icosahedron + Particles) */
+    /* 0. Snappy Cyber Circle Preloader Controller (Smooth Calm Pacing) */
+    function initPreloader() {
+      const preloader = document.getElementById('preloader');
+      const percentEl = document.getElementById('loader-percent');
+      if (!preloader || !percentEl) return;
+
+      let current = 0;
+      const targetDuration = 2200; // Slowed down from 1.2s to 2.2s for pleasant, readable loading
+      const startTime = performance.now();
+
+      function updateCounter(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / targetDuration, 1);
+        // Smoother, gentle ease-out curve
+        const easeProgress = 1 - Math.pow(1 - progress, 2.5);
+        current = Math.floor(easeProgress * 100);
+        percentEl.textContent = current;
+
+        if (progress < 1) {
+          requestAnimationFrame(updateCounter);
+        } else {
+          percentEl.textContent = '100';
+          setTimeout(() => {
+            preloader.classList.add('loaded');
+            document.body.style.overflow = '';
+            if (typeof triggerHeroStagger === 'function') {
+              triggerHeroStagger();
+            }
+          }, 240);
+        }
+      }
+
+      requestAnimationFrame(updateCounter);
+    }
+
+    /* 1. Mobile-Optimized Three.js WebGL Scene (Slower, relaxing orbital spin) */
     function initThreeHeroScene() {
       const canvas = document.getElementById('hero-canvas');
       if (!canvas) return;
@@ -1216,7 +1323,6 @@
       const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
       camera.position.z = 4.3;
 
-      // Restrict pixel ratio on mobile to prevent battery drain or frame stuttering
       const isMobile = window.innerWidth < 768;
       const renderer = new THREE.WebGLRenderer({
         canvas: canvas,
@@ -1249,7 +1355,7 @@
       const innerMesh = new THREE.Mesh(innerGeo, innerMat);
       scene.add(innerMesh);
 
-      // Ambient Particles (Optimized count for mobile)
+      // Ambient Particles
       const particleCount = isMobile ? 60 : 120;
       const particleGeo = new THREE.BufferGeometry();
       const particleCoords = new Float32Array(particleCount * 3);
@@ -1302,11 +1408,12 @@
         const deltaX = clientX - prevMousePos.x;
         const deltaY = clientY - prevMousePos.y;
 
-        outerMesh.rotation.y += deltaX * 0.007;
-        outerMesh.rotation.x += deltaY * 0.007;
-        innerMesh.rotation.y -= deltaX * 0.007;
-        innerMesh.rotation.x -= deltaY * 0.007;
-        particles.rotation.y += deltaX * 0.004;
+        // Controlled drag sensitivity
+        outerMesh.rotation.y += deltaX * 0.0045;
+        outerMesh.rotation.x += deltaY * 0.0045;
+        innerMesh.rotation.y -= deltaX * 0.0045;
+        innerMesh.rotation.x -= deltaY * 0.0045;
+        particles.rotation.y += deltaX * 0.0025;
 
         prevMousePos = { x: clientX, y: clientY };
       };
@@ -1317,7 +1424,6 @@
       window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
       window.addEventListener('mouseup', onEnd);
 
-      // Touch handlers: Allow natural page vertical scrolling while horizontal drag spins the core
       canvas.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) onStart(e.touches[0].clientX, e.touches[0].clientY);
       }, { passive: true });
@@ -1339,22 +1445,23 @@
       function animateThree() {
         requestAnimationFrame(animateThree);
         if (!isDragging) {
-          outerMesh.rotation.y += 0.0035;
-          outerMesh.rotation.x += 0.002;
-          innerMesh.rotation.y -= 0.0045;
-          innerMesh.rotation.x -= 0.0025;
-          particles.rotation.y += 0.0015;
+          // Relaxed, slow ambient rotation speed (reduced by ~50%)
+          outerMesh.rotation.y += 0.0016;
+          outerMesh.rotation.x += 0.0009;
+          innerMesh.rotation.y -= 0.002;
+          innerMesh.rotation.x -= 0.0011;
+          particles.rotation.y += 0.0007;
 
-          // Mouse follow inertia
-          outerMesh.rotation.y += (mouseNormalized.x * 0.3 - outerMesh.rotation.y) * 0.02;
-          outerMesh.rotation.x += (-mouseNormalized.y * 0.3 - outerMesh.rotation.x) * 0.02;
+          // Gentle mouse follow inertia with softer tracking
+          outerMesh.rotation.y += (mouseNormalized.x * 0.22 - outerMesh.rotation.y) * 0.012;
+          outerMesh.rotation.x += (-mouseNormalized.y * 0.22 - outerMesh.rotation.x) * 0.012;
         }
         renderer.render(scene, camera);
       }
       animateThree();
     }
 
-    /* 2. GSAP & ScrollTrigger Animations */
+    /* 2. GSAP & ScrollTrigger Animations (Smoother & Calm Pacing) */
     function initGSAPAnimations() {
       if (typeof gsap === 'undefined') return;
 
@@ -1362,33 +1469,34 @@
         gsap.registerPlugin(ScrollTrigger);
       }
 
-      // Hero Headline Stagger Reveal
-      gsap.from('#hero-headline .reveal-word', {
-        y: 35,
-        opacity: 0,
-        duration: 0.9,
-        stagger: 0.14,
-        ease: 'power4.out',
-        delay: 0.1
-      });
+      // Hero Headline Stagger Reveal (Relaxed duration)
+      window.triggerHeroStagger = function() {
+        gsap.from('#hero-headline .reveal-word', {
+          y: 40,
+          opacity: 0,
+          duration: 1.35,
+          stagger: 0.22,
+          ease: 'power3.out'
+        });
+      };
 
-      // Section Reveal
+      // Section Reveal (Gentle fade & upward glide)
       const sections = document.querySelectorAll('.gsap-fade-up');
       sections.forEach(sec => {
         gsap.from(sec, {
           scrollTrigger: {
             trigger: sec,
-            start: 'top 90%',
+            start: 'top 88%',
             toggleActions: 'play none none none'
           },
-          y: 28,
+          y: 32,
           opacity: 0,
-          duration: 0.75,
-          ease: 'power3.out'
+          duration: 1.15,
+          ease: 'power2.out'
         });
       });
 
-      // Animated Stat Counters
+      // Animated Stat Counters (Slowed down for readable progression)
       const counters = document.querySelectorAll('.stat-counter');
       counters.forEach(counter => {
         const target = parseFloat(counter.getAttribute('data-target')) || 0;
@@ -1403,7 +1511,7 @@
             let current = { val: 0 };
             gsap.to(current, {
               val: target,
-              duration: 1.6,
+              duration: 2.4, // Extended from 1.6s to 2.4s
               ease: 'power2.out',
               onUpdate: () => {
                 counter.textContent = current.val.toFixed(decimals) + suffix;
@@ -1414,9 +1522,8 @@
       });
     }
 
-    /* 3. 3D Card Tilt & Dynamic Light Sheen Physics */
+    /* 3. 3D Card Tilt & Dynamic Light Sheen Physics (Relaxed Tilt & Fluid Restitution) */
     function initCardTiltSheen() {
-      // Only attach mouse-tracking tilt on desktop hover devices for best performance
       if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
 
       const tiltCards = document.querySelectorAll('.tilt-card');
@@ -1429,10 +1536,11 @@
           const centerX = rect.width / 2;
           const centerY = rect.height / 2;
 
-          const rotateX = ((y - centerY) / centerY) * -6;
-          const rotateY = ((x - centerX) / centerX) * 6;
+          // Subtle, calm max 4.5 degree rotation
+          const rotateX = ((y - centerY) / centerY) * -4.5;
+          const rotateY = ((x - centerX) / centerX) * 4.5;
 
-          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.012, 1.012, 1.012)`;
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
           card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
           card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
         });
